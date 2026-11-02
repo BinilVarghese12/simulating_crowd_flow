@@ -71,12 +71,17 @@ const routepoints = [[
     [53.46484185368906, -2.292087078094483],
     [53.464861007815124, -2.292205095291138],
     [53.464899316041375, -2.2924143075942998]
+    ] ,[
+    [53.46331804352138, -2.2930741310119633],
+    [53.46323823170492, -2.293084859848023],
+    [53.46318395958403, -2.293084859848023],
+    [53.46317118966317, -2.2932672500610356],
+    [53.46314564980987, -2.2933691740036015],
+    [53.46312010994122, -2.293503284454346],
+    [53.46302433529693, -2.293707132339478],
+    [53.46291259793888, -2.293857336044312]
     ]
 ];
-
-
-
-
 
 
 
@@ -96,7 +101,47 @@ map.on("click", function (event) {
     L.marker(point).addTo(map);
 
 });
+const people = [];
 
+for (let i = 0; i < 10; i++) {
+  const startingPoint = i % routepoints[0].length;
+
+  const marker = L.circleMarker(routepoints[0][startingPoint], {
+    radius: 5,
+    color: "red",
+    fillColor: "red",
+    fillOpacity: 1
+  }).addTo(map);
+
+  people.push({
+    marker: marker,
+    pointIndex: startingPoint
+  });
+}
+let pointIndex = 0
+
+function movePerson() {
+  for (let i = 0; i < people.length; i++) {
+    const person = people[i];
+
+    if (person.pointIndex < routepoints[0].length - 1) {
+      person.pointIndex++;
+      person.marker.setLatLng(routepoints[0][person.pointIndex]);
+    }
+  }
+}
+let simulationTimer = null;
+
+document.getElementById("startButton").addEventListener("click", function () {
+  if (simulationTimer === null) {
+    simulationTimer = setInterval(movePerson, 500);
+  }
+});
+
+document.getElementById("stopButton").addEventListener("click", function () {
+  clearInterval(simulationTimer);
+  simulationTimer = null;
+});
 
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
